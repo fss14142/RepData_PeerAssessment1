@@ -19,11 +19,27 @@ library(lattice)
 library(ggplot2)
 opts_chunk$set(echo=TRUE, tidy=FALSE)
 ```
+Besides, it is expected that the 'activity.zip', containing the project data, has been downloaded to the Working Directory.
 
 
 ## Loading and preprocessing the data
 
-We begin by using `read.table` to load the data into a data frame called `activity`. Next we call `str` on `activity` to get basic information about the data frame:
+The script will unzip the data file . If the zip file is not found, an error is thrown.
+
+```{r}
+zipFileName <- "activity.zip"
+if(file.exists(zipFileName)){
+    unzip(zipFileName)
+    dataOk = TRUE
+} else {
+    ## if zip file does not exist either, execution stops with an error message.
+    warning("No data zip file found.")
+}
+
+```
+
+
+Now that the data is ready, we begin by using `read.table` to load the data into a data frame called `activity`. Next we call `str` on `activity` to get basic information about the data frame:
 
 ```{r }
 activity <- read.table(file="activity.csv", sep=",", header=TRUE, na.strings="NA")
@@ -339,4 +355,16 @@ p + scale_x_discrete(breaks=seq(1,288,24),labels=hourMinute[seq(1,288,24)]) +
 These plots illustrate the similarities and differences between the activity patterns for weekdays and weekends. As expected, the weekdays activity pattern is similar to the total activity pattern that we obtained before, because there are more weekdays than weekend days. 
 
 As expected, there's a shift in the activity pattern between weekdays and weekends: the activity in weekdays begins earlier, and it ends later in weekends. Take into account, however, that this activity patterns depend on the imputation strategy that we have used. 
+
+
+## Final cleanup
+
+The script removes the data csv file, if it was extracted from the zip file (otherwise, nothing is done). 
+
+```{r}
+    if(dataOk){
+        file.remove("activity.csv")
+        print("file activity.csv removed")
+    }
+```
 
